@@ -12,7 +12,7 @@ class HtmlConverter
 
     public function load($path)
     {
-        $html = file_get_contents(STATIC_DIR . $path);
+        $html = file_get_contents($path);
 
         if ($html === false) {
             throw new Exception("File Read Error `$path`", 1);
@@ -27,7 +27,7 @@ class HtmlConverter
     {
         $html = $this->_html;
 
-        $ret = file_put_contents(TEMPLATE_DIR . $path, $html);
+        $ret = file_put_contents($path, $html);
 
         if ($ret === false) {
             throw new Exception("File Write Error `$path`", 1);
@@ -64,14 +64,14 @@ class HtmlConverter
 
     public function append($text)
     {
-        $this->_html = $this->_html . $text;
+        $this->_html = $this->_html . PHP_EOL . $text;
 
         return $this;
     }
 
     public function prepend($text)
     {
-        $this->_html = $text . $this->_html;
+        $this->_html = $text . PHP_EOL . $this->_html;
 
         return $this;
     }
@@ -79,7 +79,9 @@ class HtmlConverter
     public function clip($pattern)
     {
         if (is_array($pattern)) {
-            $pattern = '/' . preg_quote($pattern[0], '/') . '(.*?)' . preg_quote($pattern[1], '/') . '/si';
+            $pattern = sprintf('/%s(.*?)%s/si',
+                preg_quote($pattern[0], '/'),
+                preg_quote($pattern[1], '/'));
         }
 
         $ret = preg_match($pattern, $this->_html, $matches);
@@ -116,43 +118,52 @@ class HtmlConverter
 
     protected function _stringToPattern($name, $element)
     {
-        $name = explode('.', $name);
+        // tag.class1.class2
+        $explode = explode('.', $name);
 
-        if (count($name) > 1) {
+        if (count($explode) > 1) {
             // class
-            $tag     = array_shift($name);
-            $classes = implode(' ', $name);
+            $tag     = array_shift($explode);
+            $classes = implode(' ', $explode);
 
-            $pattern = array("<{$tag} class=\"{$classes}\">", "</{$tag}>");
-
-            $element = array(
-                'pattern' => $pattern,
+            return array(
+                'pattern' => array("<{$tag} class=\"{$classes}\">", "</{$tag}>"),
                 'inner'   => $element,
             );
-        } else {
-            $ret = preg_match('/^\[([a-zA-Z0-9\-\_]*?)\]$/i', $name[0], $matches);
-
-            if ($ret) {
-                // attr
-                $pattern = '/' . preg_quote($matches[1], '/') . '=".*?"/si';
-                $element = $matches[1] . '="' . $element . '"';
-
-                $element = array(
-                    'pattern' => $pattern,
-                    'replace' => $element,
-                );
-            } else {
-                // tag
-                $pattern = array("<{$name[0]}>", "</{$name[0]}>");
-
-                $element = array(
-                    'pattern' => $pattern,
-                    'inner'   => $element,
-                );
-            }
         }
 
-        return $element;
+        // [attr] -> attr="element"
+        $ret = preg_match('/^\[([a-zA-Z0-9\-\_]*?)\]$/i', $name, $matches);
+
+        if ($ret) {
+            // attr
+            return array(
+                'pattern' => sprintf('/%s=".*?"/si', preg_quote($matches[1], '/')),
+                'replace' => $matches[1] . '="' . $element . '"',
+            );
+        }
+
+        $ret = preg_match('/^meta\[([a-z]*?)=([a-z]*?)\]$/i', $name, $matches);
+
+        if ($ret) {
+            // attr
+            return array(
+                'pattern' => sprintf('/<meta %s="%s" content=".*?">/si',
+                    preg_quote($matches[1], '/'),
+                    preg_quote($matches[2], '/')),
+                'replace' => sprintf(
+                    '<meta %s="%s" content="%s">',
+                    $matches[1],
+                    $matches[2],
+                    $element),
+            );
+        }
+
+        // tag
+        return array(
+            'pattern' => array("<{$name}>", "</{$name}>"),
+            'inner'   => $element,
+        );
     }
 
     /**
@@ -172,7 +183,9 @@ class HtmlConverter
         $limit   = -1; // replace count: infinity
 
         if (is_array($pattern)) {
-            $pattern = '/' . preg_quote($pattern[0], '/') . '.*?' . preg_quote($pattern[1], '/') . '/si';
+            $pattern = sprintf( '/%s.*?%s/si',
+                preg_quote($pattern[0], '/'),
+                preg_quote($pattern[1], '/'));
         }
 
         if (is_callable($replace)) {

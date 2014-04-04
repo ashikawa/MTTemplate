@@ -16,7 +16,7 @@ $vars = array(
 
 $modifier = array(
     array('<mt:Unless replace="http://example.com/","/">', '</mt:Unless>'),
-    array('<mt:Unless regex_replace="/\s*\n+/g","\n">', '</mt:Unless>'),
+    array('<mt:Unless regex_replace="/\s*\n+/g","\n">',    '</mt:Unless>'),
 );
 
 $static = array(
@@ -25,15 +25,15 @@ $static = array(
 );
 
 foreach ($static as $from => $to) {
-    $converter = new HtmlConverter($from);
+    $converter = new HtmlConverter(STATIC_DIR . $from);
     $converter->replace($vars)
-        ->write("/$to.mtml");
+        ->write(TEMPLATE_DIR . "/$to.mtml");
 }
 
 /**
  * 個別モジュール
  */
-$converter = new HtmlConverter("/inc/header.html");
+$converter = new HtmlConverter(STATIC_DIR . "/inc/header.html");
 
 $modules = array(
     'h1'    => '<$mt:BlogName encode_html="1"$>',
@@ -41,9 +41,9 @@ $modules = array(
 
 $converter->replace($vars)
     ->processModules($modules)
-    ->write("/header.mtml");
+    ->write(TEMPLATE_DIR . "/header.mtml");
 
-$converter = new HtmlConverter("/index.html");
+$converter = new HtmlConverter(STATIC_DIR . "/index.html");
 
 $modules = array(
     'h1'     => '<$mt:EntryTitle$>',
@@ -55,19 +55,16 @@ $converter->replace($vars)
     ->clip(array('<article>', '</article>'))
     ->wrap(array(array('    <article>', '</article>')))
     ->processModules($modules)
-    ->write("/entry_summary.mtml");
+    ->write(TEMPLATE_DIR . "/entry_summary.mtml");
 
 /**
  * HTML全体
  */
-$converter = new HtmlConverter("/index.html");
+$converter = new HtmlConverter(STATIC_DIR . "/index.html");
 
 $modules = array(
     'title' => '<$mt:BlogName encode_html="1"$>',
-    'meta[name=description]' => array(
-        'pattern' => '%<meta name="description" content=".*?">%si',
-        'replace' => '<meta name="description" content="<$mt:BlogDescription$>">',
-    ),
+    'meta[name=description]' => '<$mt:BlogDescription$>',
     '.contents' => array(
         'pattern' => array('<div class="contents">', '</div><!-- /.contents -->'),
         'inner'   => <<<EOT
@@ -81,16 +78,13 @@ EOT
 $converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
-    ->write("/main_index.mtml");
+    ->write(TEMPLATE_DIR . "/main_index.mtml");
 
-$converter = new HtmlConverter("/category/index.html");
+$converter = new HtmlConverter(STATIC_DIR . "/category/index.html");
 
 $modules = array(
     'title' => '<$mt:CategoryLabel encode_html="1"$> | <$mt:BlogName encode_html="1"$>',
-    'meta[name=description]' => array(
-        'pattern' => '%<meta name="description" content=".*?">%si',
-        'replace' => '<meta name="description" content="<$mt:CategoryDescription$>">',
-    ),
+    'meta[name=description]' => '<$mt:CategoryDescription$>',
     '.contents' => array(
         'pattern' => array('<div class="contents">', '</div><!-- /.contents -->'),
         'inner'   => <<<EOT
@@ -104,21 +98,15 @@ EOT
 $converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
-    ->write("/category_entry_listing.mtml");
+    ->write(TEMPLATE_DIR . "/category_entry_listing.mtml");
 
-$converter = new HtmlConverter("/category/pages.html");
+$converter = new HtmlConverter(STATIC_DIR . "/category/pages.html");
 
 $modules = array(
     'title' => '<$mt:EntryTitle encode_html="1"$> | <$mt:BlogName encode_html="1"$>',
-    'meta[name=description]' => array(
-        'pattern' => '%<meta name="description" content=".*?">%si',
-        'replace' => '<meta name="description" content="<$mt:EntryExcerpt$>">',
-    ),
-    'meta[name=keywords]' => array(
-        'pattern' => '%<meta name="keywords" content=".*?">%si',
-        'replace' => '<meta name="keywords" content="<$mt:EntryKeywords$>">',
-    ),
-    'h1' => '<$mt:EntryTitle encode_html="1"$>',
+    'h1'    => '<$mt:EntryTitle encode_html="1"$>',
+    'meta[name=description]' => '<$mt:EntryExcerpt$>',
+    'meta[name=keywords]'    => '<$mt:EntryKeywords$>',
     '.contents' => array(
         'pattern' => array('<div class="entry-body">', '</div><!-- /.entry-body -->'),
         'inner'   => '<$mt:EntryBody$>'
@@ -128,21 +116,15 @@ $modules = array(
 $converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
-    ->write("/entry.mtml");
+    ->write(TEMPLATE_DIR . "/entry.mtml");
 
-$converter = new HtmlConverter("/pages/page1.html");
+$converter = new HtmlConverter(STATIC_DIR . "/pages/page1.html");
 
 $modules = array(
     'title' => '<$mt:EntryTitle encode_html="1"$> | <$mt:BlogName encode_html="1"$>',
-    'meta[name=description]' => array(
-        'pattern' => '%<meta name="description" content=".*?">%si',
-        'replace' => '<meta name="description" content="<$mt:MTPageExcerpt$>">',
-    ),
-    'meta[name=keywords]' => array(
-        'pattern' => '%<meta name="keywords" content=".*?">%si',
-        'replace' => '<meta name="keywords" content="<$mt:PageKeywords$>">',
-    ),
-    'h1' => '<$mt:EntryTitle encode_html="1"$>',
+    'h1'    => '<$mt:EntryTitle encode_html="1"$>',
+    'meta[name=description]' => '<$mt:MTPageExcerpt$>',
+    'meta[name=keywords]'    => '<$mt:PageKeywords$>',
     '.contents' => array(
         'pattern' => array('<div class="entry-body">', '</div><!-- /.entry-body -->'),
         'inner'   => '<$mt:EntryBody$>'
@@ -152,4 +134,4 @@ $modules = array(
 $converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
-    ->write("/page.mtml");
+    ->write(TEMPLATE_DIR . "/page.mtml");
