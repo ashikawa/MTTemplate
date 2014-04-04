@@ -3,15 +3,35 @@ class HtmlConverter
 {
     protected $_html = null;
 
-    public function __construct($path)
+    protected $_loadBase = '';
+
+    protected $_writeBase = '';
+
+    public function __construct($path = null)
     {
         if ($path) {
             $this->load($path);
         }
     }
 
+    public function setLoadBase($path)
+    {
+        $this->_loadBase = $path;
+
+        return $this;
+    }
+
+    public function setwriteBase($path)
+    {
+        $this->_writeBase = $path;
+
+        return $this;
+    }
+
     public function load($path)
     {
+        $path = $this->_loadBase . $path;
+
         $html = file_get_contents($path);
 
         if ($html === false) {
@@ -26,6 +46,8 @@ class HtmlConverter
     public function write($path)
     {
         $html = $this->_html;
+
+        $path = $this->_writeBase . $path;
 
         $ret = file_put_contents($path, $html);
 
@@ -183,7 +205,7 @@ class HtmlConverter
         $limit   = -1; // replace count: infinity
 
         if (is_array($pattern)) {
-            $pattern = sprintf( '/%s.*?%s/si',
+            $pattern = sprintf('/%s.*?%s/si',
                 preg_quote($pattern[0], '/'),
                 preg_quote($pattern[1], '/'));
         }

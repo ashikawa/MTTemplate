@@ -5,6 +5,11 @@ define('TEMPLATE_DIR', realpath(dirname(__FILE__) . "/../theme/template/template
 
 require_once './lib/HtmlConverter.php';
 
+$converter = new HtmlConverter();
+
+$converter->setLoadBase(STATIC_DIR)
+    ->setWriteBase(TEMPLATE_DIR);
+
 // html -> mtml
 $vars = array(
     '<meta charset="UTF-8">' => '<meta charset="<$mt:PublishCharset$>">',
@@ -25,15 +30,15 @@ $static = array(
 );
 
 foreach ($static as $from => $to) {
-    $converter = new HtmlConverter(STATIC_DIR . $from);
+    $converter->load($from);
     $converter->replace($vars)
-        ->write(TEMPLATE_DIR . "/$to.mtml");
+        ->write("/$to.mtml");
 }
 
 /**
  * 個別モジュール
  */
-$converter = new HtmlConverter(STATIC_DIR . "/inc/header.html");
+$converter->load("/inc/header.html");
 
 $modules = array(
     'h1'    => '<$mt:BlogName encode_html="1"$>',
@@ -41,9 +46,9 @@ $modules = array(
 
 $converter->replace($vars)
     ->processModules($modules)
-    ->write(TEMPLATE_DIR . "/header.mtml");
+    ->write("/header.mtml");
 
-$converter = new HtmlConverter(STATIC_DIR . "/index.html");
+$converter->load("/index.html");
 
 $modules = array(
     'h1'     => '<$mt:EntryTitle$>',
@@ -55,12 +60,12 @@ $converter->replace($vars)
     ->clip(array('<article>', '</article>'))
     ->wrap(array(array('    <article>', '</article>')))
     ->processModules($modules)
-    ->write(TEMPLATE_DIR . "/entry_summary.mtml");
+    ->write("/entry_summary.mtml");
 
 /**
  * HTML全体
  */
-$converter = new HtmlConverter(STATIC_DIR . "/index.html");
+$converter->load("/index.html");
 
 $modules = array(
     'title' => '<$mt:BlogName encode_html="1"$>',
@@ -78,9 +83,9 @@ EOT
 $converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
-    ->write(TEMPLATE_DIR . "/main_index.mtml");
+    ->write("/main_index.mtml");
 
-$converter = new HtmlConverter(STATIC_DIR . "/category/index.html");
+$converter->load("/category/index.html");
 
 $modules = array(
     'title' => '<$mt:CategoryLabel encode_html="1"$> | <$mt:BlogName encode_html="1"$>',
@@ -98,9 +103,9 @@ EOT
 $converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
-    ->write(TEMPLATE_DIR . "/category_entry_listing.mtml");
+    ->write("/category_entry_listing.mtml");
 
-$converter = new HtmlConverter(STATIC_DIR . "/category/pages.html");
+$converter->load("/category/pages.html");
 
 $modules = array(
     'title' => '<$mt:EntryTitle encode_html="1"$> | <$mt:BlogName encode_html="1"$>',
@@ -116,9 +121,9 @@ $modules = array(
 $converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
-    ->write(TEMPLATE_DIR . "/entry.mtml");
+    ->write("/entry.mtml");
 
-$converter = new HtmlConverter(STATIC_DIR . "/pages/page1.html");
+$converter->load("/pages/page1.html");
 
 $modules = array(
     'title' => '<$mt:EntryTitle encode_html="1"$> | <$mt:BlogName encode_html="1"$>',
@@ -134,4 +139,4 @@ $modules = array(
 $converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
-    ->write(TEMPLATE_DIR . "/page.mtml");
+    ->write("/page.mtml");
