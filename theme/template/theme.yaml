@@ -1,0 +1,97 @@
+--- 
+author_link: ''
+class: website
+description: ''
+elements:
+  blog_static_files:  
+    component: ~  
+    data:   
+      - css
+      - images
+      - js
+    importer: blog_static_files   
+  default_prefs: 
+    importer: default_prefs
+    data: 
+      content_css: "/editor.css"
+  custom_fields: 
+    component: commercial
+    data: 
+    importer: custom_fields
+  default_categories: 
+    component: ~
+    data: 
+    importer: default_categories
+  default_folders: 
+    component: ~
+    data: 
+      images: 
+        children: 
+          uploads: 
+            label: uploads
+        label: images
+    importer: default_folders
+  template_set: 
+    component: ~
+    data: 
+      base_path: templates
+      label: exported_template set
+      templates: 
+        archive: 
+          category_entry_listing: 
+            label: カテゴリ別記事リスト
+            mappings: 
+              category: 
+                archive_type: Category
+                file_template: "%c/%i"
+                preferred: 1
+        index: 
+          feed_recent: 
+            label: 最新記事のフィード
+            outfile: atom.xml
+            rebuild_me: 1
+          main_index: 
+            label: メインページ
+            outfile: index.html
+            rebuild_me: 1
+        individual: 
+          entry: 
+            label: 記事
+            mappings: 
+              individual: 
+                archive_type: Individual
+                file_template: "%c/%f"
+                preferred: 1
+        module: 
+          header: 
+            label: ヘッダー
+          footer: 
+            label: フッター
+          sidebar: 
+            label: サイドバー
+          entry_summary: 
+            label: 記事の概要
+        page: 
+          page: 
+            label: ウェブページ
+            mappings: 
+              page: 
+                archive_type: Page
+                file_template: "%c/%f"
+                preferred: 1
+        system: 
+          comment_preview: 
+            label: コメントプレビュー
+          comment_response: 
+            label: コメント完了
+          dynamic_error: 
+            label: ダイナミックパブリッシングエラー
+          popup_image: 
+            label: ポップアップ画像
+          search_results: 
+            label: 検索結果
+    importer: template_set
+id: mt_theme
+label: mt_theme
+name: mt_theme
+version: '1.0'
