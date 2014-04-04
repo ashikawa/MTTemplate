@@ -58,7 +58,6 @@ $modules = array(
 
 $converter->replace($vars)
     ->clip(array('<article>', '</article>'))
-    ->wrap(array(array('    <article>', '</article>')))
     ->processModules($modules)
     ->write("/entry_summary.mtml");
 

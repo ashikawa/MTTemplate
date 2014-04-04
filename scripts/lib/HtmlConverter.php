@@ -112,7 +112,7 @@ class HtmlConverter
             throw new Exception("Error replacement `{$pattern}`", 1);
         }
 
-        $this->_html  = $matches[1];
+        $this->_html  = $matches[0];
 
         return $this;
     }
