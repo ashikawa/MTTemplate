@@ -76,7 +76,7 @@ class HtmlConverter
         $html = $this->_html;
 
         foreach ($replace as $_search => $_replace) {
-            $html = str_replace($_search, $_replace, $html);
+            $html = str_ireplace($_search, $_replace, $html);
         }
 
         $this->_html = $html;
