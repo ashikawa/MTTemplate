@@ -47,7 +47,7 @@ $converter = new HtmlConverter("/index.html");
 
 $modules = array(
     'h1'     => '<$mt:EntryTitle$>',
-    'p'      => '<$MTEntryExcerpt$>',
+    'p'      => '<$mt:EntryExcerpt$>',
     '[href]' => '<$mt:EntryPermalink encode_html=\'1\'$>',
 );
 
@@ -56,7 +56,6 @@ $converter->replace($vars)
     ->wrap(array(array('    <article>', '</article>')))
     ->processModules($modules)
     ->write("/entry_summary.mtml");
-
 
 /**
  * HTML全体
@@ -67,7 +66,7 @@ $modules = array(
     'title' => '<$mt:BlogName encode_html="1"$>',
     'meta[name=description]' => array(
         'pattern' => '%<meta name="description" content=".*?">%si',
-        'replace' => '<meta name="description" content="<$MTBlogDescription$>">',
+        'replace' => '<meta name="description" content="<$mt:BlogDescription$>">',
     ),
     '.contents' => array(
         'pattern' => array('<div class="contents">', '</div><!-- /.contents -->'),
@@ -79,8 +78,7 @@ EOT
     ),
 );
 
-$converter->prepend($setting)
-    ->replace($vars)
+$converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
     ->write("/main_index.mtml");
@@ -91,7 +89,7 @@ $modules = array(
     'title' => '<$mt:CategoryLabel encode_html="1"$> | <$mt:BlogName encode_html="1"$>',
     'meta[name=description]' => array(
         'pattern' => '%<meta name="description" content=".*?">%si',
-        'replace' => '<meta name="description" content="<$MTCategoryDescription$>">',
+        'replace' => '<meta name="description" content="<$mt:CategoryDescription$>">',
     ),
     '.contents' => array(
         'pattern' => array('<div class="contents">', '</div><!-- /.contents -->'),
@@ -103,14 +101,10 @@ EOT
     ),
 );
 
-$converter->prepend($setting)
-    ->replace($vars)
+$converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
     ->write("/category_entry_listing.mtml");
-
-
-
 
 $converter = new HtmlConverter("/category/pages.html");
 
@@ -118,7 +112,7 @@ $modules = array(
     'title' => '<$mt:EntryTitle encode_html="1"$> | <$mt:BlogName encode_html="1"$>',
     'meta[name=description]' => array(
         'pattern' => '%<meta name="description" content=".*?">%si',
-        'replace' => '<meta name="description" content="<mt:EntryExcerpt>">',
+        'replace' => '<meta name="description" content="<$mt:EntryExcerpt$>">',
     ),
     'meta[name=keywords]' => array(
         'pattern' => '%<meta name="keywords" content=".*?">%si',
@@ -127,17 +121,14 @@ $modules = array(
     'h1' => '<$mt:EntryTitle encode_html="1"$>',
     '.contents' => array(
         'pattern' => array('<div class="entry-body">', '</div><!-- /.entry-body -->'),
-        'inner'   => '<$MTEntryBody$>'
+        'inner'   => '<$mt:EntryBody$>'
     ),
 );
 
-$converter->prepend($setting)
-    ->replace($vars)
+$converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
     ->write("/entry.mtml");
-
-
 
 $converter = new HtmlConverter("/pages/page1.html");
 
@@ -149,19 +140,16 @@ $modules = array(
     ),
     'meta[name=keywords]' => array(
         'pattern' => '%<meta name="keywords" content=".*?">%si',
-        'replace' => '<meta name="keywords" content="<$MTPageKeywords$>">',
+        'replace' => '<meta name="keywords" content="<$mt:PageKeywords$>">',
     ),
     'h1' => '<$mt:EntryTitle encode_html="1"$>',
     '.contents' => array(
         'pattern' => array('<div class="entry-body">', '</div><!-- /.entry-body -->'),
-        'inner'   => '<$MTEntryBody$>'
+        'inner'   => '<$mt:EntryBody$>'
     ),
 );
 
-$converter->prepend($setting)
-    ->replace($vars)
+$converter->replace($vars)
     ->processModules($modules)
     ->wrap($modifier)
     ->write("/page.mtml");
-
-
