@@ -133,7 +133,7 @@ class HtmlConverter
         }
 
         // [attr] -> attr="element"
-        $ret = preg_match('/^\[([a-zA-Z0-9\-\_]*?)\]$/i', $name, $matches);
+        $ret = preg_match('/^\[([a-z0-9\-\_\:]*?)\]$/i', $name, $matches);
 
         if ($ret) {
             // attr
@@ -143,7 +143,7 @@ class HtmlConverter
             );
         }
 
-        $ret = preg_match('/^meta\[([a-z]*?)=([a-z]*?)\]$/i', $name, $matches);
+        $ret = preg_match('/^meta\[([a-z0-9\-\_\:]*?)=([a-z]*?)\]$/i', $name, $matches);
 
         if ($ret) {
             // attr
