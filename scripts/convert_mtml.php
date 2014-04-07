@@ -35,7 +35,7 @@ function add_modifier($dom)
     ));
 }
 
-function ssiToMTInclude($dom)
+function ssi_to_include($dom)
 {
     $ssi = array(
         '<!--#include virtual="/inc/header.html" -->'  => '<$mt:Include identifier="header"$>',
@@ -48,7 +48,7 @@ function ssiToMTInclude($dom)
 
 function output_file($path, $dom)
 {
-    $dom = ssiToMTInclude($dom);
+    $dom = ssi_to_include($dom);
 
     return file_put_contents(TEMPLATE_DIR . $path, $dom);
 }
@@ -103,7 +103,7 @@ output_file("/category_entry_listing.mtml", $dom);
  */
 $dom = file_get_html_pretty("/category/pages.html");
 $dom->find('title', 0)->innertext = '<$mt:EntryTitle encode_html="1"$> | <$mt:BlogName encode_html="1"$>';
-$dom->find('h1', 0)->innertext    = '<$mt:EntryTitle encode_html="1"$>';
+$dom->find('h1',    0)->innertext = '<$mt:EntryTitle encode_html="1"$>';
 $dom->find('meta[name=description]', 0)->content = '<$mt:EntryExcerpt$>';
 $dom->find('meta[name=keywords]',    0)->content = '<$mt:EntryKeywords$>';
 $dom->find('div.entry-body', 0)->innertext = '<$mt:EntryBody$>';
