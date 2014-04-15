@@ -5,6 +5,7 @@ define('TEMPLATE_DIR', realpath(dirname(__FILE__) . "/../theme/template/template
 
 /**
  * @see http://nplll.com/archives/2011/10/php_simple_html_dom_parser.php
+ * @see http://simplehtmldom.sourceforge.net/
  */
 require_once './lib/simple_html_dom.php';
 
